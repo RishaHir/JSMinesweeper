@@ -2,6 +2,15 @@
 "use strict";
 /*tslint:disabled*/
 
+// if (typeof module === "object" && module && typeof module.exports === "object") {
+//     module.exports = {
+//         start: function () {
+// 			console.log("HALOOOOOOOOOOO");
+//             return load_images();
+//         }
+//     }
+// }
+
 console.log('At start of main.js');
 
 let TILE_SIZE = 24;
