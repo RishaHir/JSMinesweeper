@@ -6266,7 +6266,7 @@ const serverGames = new Map();
 
 // read the data message and perform the actions
 async function handleActions(message) {
-	console.log("INSIDE handleActions()");
+	// console.log("INSIDE handleActions()");
 	const header = message.header;
 	
 	if (header == null) {
@@ -6282,12 +6282,12 @@ async function handleActions(message) {
 
 	if (actions == null) {
         reply.header.status = IN_PLAY;
-		console.log("JSEM TADY" + JSON.stringify(reply))
+		// console.log("JSEM TADY" + JSON.stringify(reply))
  		return reply;
 	}
 	
 	let game = getGame(header.id);
-	console.log("game: " + game);
+	// console.log("game: " + game);
 	if (game == null) {
 		// if (docNgMode.checked) {
 			// vždycky chceme no guess hru

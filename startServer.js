@@ -21,6 +21,92 @@ global.window = dom.window;
 global.document = dom.window.document;
 global.Image = dom.window.Image;
 
+
+// validace pomocí express-validator
+const { checkSchema, validationResult } = require('express-validator');
+const validateDataRequest = checkSchema({
+    "header.id": {
+        in: ['body'],
+        isInt: true,
+        toInt: true,
+        errorMessage: 'ID must be an integer'
+    },
+    "header.width": {
+        in: ['body'],
+        isInt: true,
+        toInt: true,
+        custom: {
+            options: (value) => value > 0,
+            errorMessage: 'Width must be a positive integer'
+        }
+    },
+    "header.height": {
+        in: ['body'],
+        isInt: true,
+        toInt: true,
+        custom: {
+            options: (value) => value > 0,
+            errorMessage: 'Height must be a positive integer'
+        }
+    },
+    "header.mines": {
+        in: ['body'],
+        isInt: true,
+        toInt: true,
+        custom: {
+            options: (value, { req }) => value >= 0 && value < req.body.header.width * req.body.header.height,
+            errorMessage: 'Mines count must be a non-negative integer less than width * height'
+        }
+    },
+    "header.seed": {
+        in: ['body'],
+        isInt: true,
+        toInt: true,
+        errorMessage: 'Seed must be an integer'
+    },
+    "header.gametype": {
+        in: ['body'],
+        isString: true,
+        matches: {
+            options: [/^safe$/],
+            errorMessage: 'Game type must "safe"'
+        }
+    },
+    "actions": {
+        in: ['body'],
+        isArray: true,
+        errorMessage: 'Actions must be an array'
+    },
+    "actions.*.index": {
+        in: ['body'],
+        isInt: true,
+        toInt: true,
+		custom: {
+            options: (value, { req }) => value >= 0 && value < req.body.header.width * req.body.header.height,
+            errorMessage: 'Action index must be a non-negative integer less than width * height'
+        }
+    },
+    "actions.*.action": {
+        in: ['body'],
+        isInt: true,
+        toInt: true,
+        custom: {
+            options: (value) => [1, 2, 3].includes(value),
+            errorMessage: 'Action must be one of the integers: 1, 2, or 3'
+        }
+    }
+});
+
+// Middleware
+const validateRequestMiddleware = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+};
+
+
 require("./Minesweeper/client/Board.js");
 require("./Minesweeper/client/Tile.js");
 require("./Minesweeper/client/solver_main.js");
@@ -89,7 +175,7 @@ server.post('/kill', function (req, res) {
 });
 
 // used to send the actions and their consequences
-server.post('/data', async function (req, res) {
+server.post('/data', validateDataRequest, validateRequestMiddleware, async function (req, res) {
 	
 	console.log('Data request received ');
 	
@@ -99,6 +185,7 @@ server.post('/data', async function (req, res) {
 	var reply = await minesweeperLogic.handleActions(message);
 	if (reply == null) {
 		console.log("No reply returned from handle actions method");
+		return res.status(500).json({ error: 'Internal server error: No reply generated.' });
 	}
 	
 	console.log("==> " + JSON.stringify(reply));
