@@ -26,7 +26,7 @@
 "use strict";
 
 var height = 16;
-
+let BINOMIAL;
 
 function apply() {
 
@@ -6134,6 +6134,9 @@ if (typeof module === "object" && module && typeof module.exports === "object") 
         },
         killGame: function (message) {
             return killGame(message);
+        },
+        startup: function () {
+            return startup();
         }
     }
 }
@@ -9699,7 +9702,7 @@ const SKULL = 14;
 
 const PLAY_CLIENT_SIDE = true;
 
-let BINOMIAL;
+
 
 // holds the images
 const images = [];
@@ -9840,9 +9843,9 @@ async function startup() {
 
     // do we have a touch screen?
     hasTouchScreen = false;
-    if ("maxTouchPoints" in navigator) {
-        hasTouchScreen = navigator.maxTouchPoints > 0;
-    }
+    // if ("maxTouchPoints" in navigator) {
+    //     hasTouchScreen = navigator.maxTouchPoints > 0;
+    // }
     if (hasTouchScreen) {
         console.log("Device supports touch screen");
     } else {
@@ -10536,7 +10539,7 @@ function updateMineCount(minesLeft) {
         const digit = work % 10;
         work = (work - digit) / 10;
 
-        ctxBombsLeft.drawImage(led_images[digit], DIGIT_WIDTH * position + 2, 2, DIGIT_WIDTH - 4, DIGIT_HEIGHT - 4);
+        // ctxBombsLeft.drawImage(led_images[digit], DIGIT_WIDTH * position + 2, 2, DIGIT_WIDTH - 4, DIGIT_HEIGHT - 4);
 
         position--;
     }
@@ -11262,8 +11265,8 @@ function keyPressedEvent(e) {
             window.requestAnimationFrame(() => renderTiles(tilesToUpdate));
         } else if (e.key == 'v' && e.ctrlKey) {
             //console.log("Control-V pressed");
-            navigator.clipboard.readText().then(
-                clipText => newBoardFromString(clipText));
+            // navigator.clipboard.readText().then(
+            //     clipText => newBoardFromString(clipText));
         } else if (e.key == 'ArrowRight') {
              if (replayMode) {
                 if (e.shiftKey) {
@@ -11907,11 +11910,11 @@ function draw(x, y, tileType) {
 
     //console.log('Drawing image...');
 
-    if (tileType == BOMB || tileType == SKULL) {
-        ctx.drawImage(images[0], x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);  // before we draw the bomb depress the square
-    }
+    // if (tileType == BOMB || tileType == SKULL) {
+    //     ctx.drawImage(images[0], x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);  // before we draw the bomb depress the square
+    // }
 
-    ctx.drawImage(images[tileType], x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    // ctx.drawImage(images[tileType], x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
 }
 
@@ -12810,7 +12813,7 @@ function setURLParms(parm, value) {
         urlParams.set(parm, value);
     }
    
-    window.history.replaceState(null, null, "index.html?" + urlParams.toString());
+    // window.history.replaceState(null, null, "index.html?" + urlParams.toString());
 }
 
 function showMessage(text) {

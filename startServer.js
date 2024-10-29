@@ -129,7 +129,7 @@ server.use(express.json());
 
 // setup the heart beat logic to run regularily (interval in milliseconds)
 setInterval(minesweeperLogic.heartbeat, 60000);
-
+minesweeperLogic.startup();
 // a main site then send the html home page
 server.get('/start', function (req, res) {
 
@@ -182,13 +182,19 @@ server.post('/data', validateDataRequest, validateRequestMiddleware, async funct
 	var message = req.body;
 	
 	console.log("<== " + JSON.stringify(message));
-	var reply = await minesweeperLogic.handleActions(message);
-	if (reply == null) {
-		console.log("No reply returned from handle actions method");
-		return res.status(500).json({ error: 'Internal server error: No reply generated.' });
+	try {
+		var reply = await minesweeperLogic.handleActions(message);
+		if (reply == null) {
+			console.log("No reply returned from handle actions method");
+			return res.status(500).json({ error: 'Internal server error: No reply generated.' });
+		}
+		
+		console.log("==> " + JSON.stringify(reply));
+	} catch (e) {
+		console.log('Game logic error, perhaps too many mines for too small area? error: ' + e.message + '\n' + e.stack );
+		return res.status(500).json({ error: 'Internal server error: No reply generated. Maybe too many mines for too small area?' });
 	}
 	
-	console.log("==> " + JSON.stringify(reply));
 	
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.write(JSON.stringify(reply));  
