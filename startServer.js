@@ -123,7 +123,9 @@ require("./Minesweeper/Utility/Binomial.js");
 var minesweeperLogic = require('./Minesweeper/client/MineSweeperGame');
 var main = require("./Minesweeper/client/main.js");
 
+const cors = require('cors');
 const server = express();
+server.use(cors()); // Enable CORS
 server.use(express.static(path.join(__dirname, '')));
 server.use(express.json());
 
@@ -204,7 +206,7 @@ server.post('/data', validateDataRequest, validateRequestMiddleware, async funct
 
 
 // start up the server
-http.createServer(server).listen(5000, function(){
-    console.log('HTTP server listening on port 5000');
+http.createServer(server).listen(5500, function(){
+    console.log('HTTP server listening on port 5500');
 });
 
